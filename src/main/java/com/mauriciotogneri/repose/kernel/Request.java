@@ -79,6 +79,11 @@ public final class Request
         return getHeader(key.toString());
     }
 
+    public String getBody()
+    {
+        return body;
+    }
+
     public <T> T getBody(Class<T> clazz) throws BadRequestException
     {
         return getObjectFromJson(clazz, body, "Invalid body");

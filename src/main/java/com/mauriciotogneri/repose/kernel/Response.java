@@ -48,6 +48,14 @@ public final class Response
         return builder.build();
     }
 
+    public static Response plain(String content)
+    {
+        Builder builder = new Builder(StatusCode.OK, MimeType.PLAIN);
+        builder.setContent(content);
+
+        return builder.build();
+    }
+
     public static Response html(String content)
     {
         Builder builder = new Builder(StatusCode.OK, MimeType.HTML);
