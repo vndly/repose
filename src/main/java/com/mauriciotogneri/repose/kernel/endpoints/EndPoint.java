@@ -35,48 +35,64 @@ public class EndPoint
 
     public Response getResponse(Request request) throws Exception
     {
-        Method method = request.getMethod();
-
-        switch (method)
+        try
         {
-            case GET:
-                validateMethod(method, request);
-                return get(request);
+            Method method = request.getMethod();
 
-            case POST:
-                validateMethod(method, request);
-                return post(request);
+            switch (method)
+            {
+                case GET:
+                    validateMethod(method, request);
+                    return get(request);
 
-            case PUT:
-                validateMethod(method, request);
-                return put(request);
+                case POST:
+                    validateMethod(method, request);
+                    return post(request);
 
-            case DELETE:
-                validateMethod(method, request);
-                return delete(request);
+                case PUT:
+                    validateMethod(method, request);
+                    return put(request);
 
-            case PATCH:
-                validateMethod(method, request);
-                return patch(request);
+                case DELETE:
+                    validateMethod(method, request);
+                    return delete(request);
 
-            case HEAD:
-                validateMethod(method, request);
-                return head(request);
+                case PATCH:
+                    validateMethod(method, request);
+                    return patch(request);
 
-            case TRACE:
-                validateMethod(method, request);
-                return trace(request);
+                case HEAD:
+                    validateMethod(method, request);
+                    return head(request);
 
-            case OPTIONS:
-                validateMethod(method, request);
-                return options(request);
+                case TRACE:
+                    validateMethod(method, request);
+                    return trace(request);
 
-            case CONNECT:
-                validateMethod(method, request);
-                return connect(request);
+                case OPTIONS:
+                    validateMethod(method, request);
+                    return options(request);
+
+                case CONNECT:
+                    validateMethod(method, request);
+                    return connect(request);
+            }
+
+            throw MethodNotAllowedException.DEFAULT;
         }
+        catch (Exception e)
+        {
+            Response response = onException(e);
 
-        throw MethodNotAllowedException.DEFAULT;
+            if (response != null)
+            {
+                return response;
+            }
+            else
+            {
+                throw e;
+            }
+        }
     }
 
     private void validateMethod(Method methodName, Request request) throws Exception
@@ -117,6 +133,12 @@ public class EndPoint
         {
             throw exception;
         }
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public synchronized Response onException(Exception exception) throws Exception
+    {
+        return null;
     }
 
     @SuppressWarnings("UnusedParameters")

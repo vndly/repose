@@ -1,6 +1,5 @@
 package com.mauriciotogneri.repose.exceptions;
 
-import com.mauriciotogneri.repose.kernel.Response;
 import com.mauriciotogneri.repose.types.StatusCode;
 
 public class RequestErrorException extends Exception
@@ -16,22 +15,14 @@ public class RequestErrorException extends Exception
         this.message = message;
     }
 
-    public Response getResponse()
+    public StatusCode getStatusCode()
     {
-        ErrorResponse errorResponse = new ErrorResponse(statusCode.code, message);
-
-        return Response.json(statusCode, errorResponse);
+        return statusCode;
     }
 
-    public static class ErrorResponse
+    @Override
+    public String getMessage()
     {
-        private final int code;
-        private final String message;
-
-        public ErrorResponse(int code, String message)
-        {
-            this.code = code;
-            this.message = message;
-        }
+        return message;
     }
 }

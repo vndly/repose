@@ -1,9 +1,7 @@
 package com.mauriciotogneri.repose.kernel;
 
-import com.mauriciotogneri.repose.exceptions.RequestErrorException;
 import com.mauriciotogneri.repose.helpers.ResourceHelper;
 import com.mauriciotogneri.repose.kernel.endpoints.EndPoint;
-import com.mauriciotogneri.repose.types.StatusCode;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -40,13 +38,9 @@ final class Task implements Runnable
 
             send(response, socket, startTime);
         }
-        catch (RequestErrorException e)
-        {
-            returnError(e.getResponse(), socket, e, startTime);
-        }
         catch (Exception e)
         {
-            returnError(Response.json(StatusCode.INTERNAL_SERVER_ERROR, e.getStackTrace()), socket, e, startTime);
+            returnError(service.onException(e), socket, e, startTime);
         }
         finally
         {

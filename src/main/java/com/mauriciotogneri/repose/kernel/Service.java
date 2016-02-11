@@ -1,9 +1,11 @@
 package com.mauriciotogneri.repose.kernel;
 
 import com.mauriciotogneri.repose.exceptions.NotFoundException;
+import com.mauriciotogneri.repose.exceptions.RequestErrorException;
 import com.mauriciotogneri.repose.helpers.ResourceHelper;
 import com.mauriciotogneri.repose.kernel.endpoints.EndPoint;
 import com.mauriciotogneri.repose.kernel.endpoints.EndPointDirectory;
+import com.mauriciotogneri.repose.types.StatusCode;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -82,6 +84,19 @@ public abstract class Service extends Thread
         {
             ResourceHelper.close(serverSocket);
             onFinish();
+        }
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public Response onException(Exception exception)
+    {
+        if (exception instanceof RequestErrorException)
+        {
+            return Response.empty(((RequestErrorException) exception).getStatusCode());
+        }
+        else
+        {
+            return Response.empty(StatusCode.INTERNAL_SERVER_ERROR);
         }
     }
 
