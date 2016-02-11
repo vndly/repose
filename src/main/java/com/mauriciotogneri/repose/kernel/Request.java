@@ -1,7 +1,7 @@
 package com.mauriciotogneri.repose.kernel;
 
+import com.mauriciotogneri.repose.annotations.NotNull;
 import com.mauriciotogneri.repose.annotations.Range;
-import com.mauriciotogneri.repose.annotations.Required;
 import com.mauriciotogneri.repose.exceptions.BadRequestException;
 import com.mauriciotogneri.repose.exceptions.MethodNotAllowedException;
 import com.mauriciotogneri.repose.helpers.JsonHelper;
@@ -117,15 +117,15 @@ public final class Request
 
     private void validateParameter(Field field, Object value) throws BadRequestException
     {
-        Required required = field.getAnnotation(Required.class);
+        NotNull notNull = field.getAnnotation(NotNull.class);
 
-        if (required != null)
+        if (notNull != null)
         {
             if (value == null)
             {
                 throw new BadRequestException("Missing parameter '" + field.getName() + "'");
             }
-            else if (required.value() && (value instanceof String) && (value.toString().isEmpty()))
+            else if (notNull.value() && (value instanceof String) && (value.toString().isEmpty()))
             {
                 throw new BadRequestException("Empty parameter '" + field.getName() + "'");
             }

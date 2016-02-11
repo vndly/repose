@@ -7,9 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
 @Documented
-public @interface FixedValues
+public @interface NotNull
 {
-    Class<? extends Enum> value();
+    // true to indicate that the field should not be empty if it's a String
+    boolean value() default true;
 }
