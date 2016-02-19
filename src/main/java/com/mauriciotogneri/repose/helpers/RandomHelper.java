@@ -18,4 +18,24 @@ public final class RandomHelper
     {
         return new Random().nextInt((max - min) + 1) + min;
     }
+
+    public static int nextInt(int max)
+    {
+        return new Random().nextInt(max);
+    }
+
+    public static double nextDouble()
+    {
+        return new Random().nextDouble();
+    }
+
+    public static double nextDouble(double max)
+    {
+        return new Random().nextDouble() * max;
+    }
+
+    public static int sign()
+    {
+        return (new Random().nextBoolean() ? 1 : -1);
+    }
 }

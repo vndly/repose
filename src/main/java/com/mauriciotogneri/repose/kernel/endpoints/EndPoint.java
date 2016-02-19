@@ -129,7 +129,7 @@ public class EndPoint
     {
         String header = request.getHeader(key);
 
-        if (!header.contains(value))
+        if ((header != null) && (!header.contains(value)))
         {
             throw exception;
         }
