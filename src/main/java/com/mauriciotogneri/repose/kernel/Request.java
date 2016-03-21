@@ -282,8 +282,12 @@ public final class Request
                 if (contentLength > 0)
                 {
                     char[] buffer = new char[contentLength];
-                    reader.read(buffer, 0, contentLength);
-                    body = new String(buffer);
+                    int read = reader.read(buffer, 0, contentLength);
+
+                    if (read > 0)
+                    {
+                        body = new String(buffer);
+                    }
                 }
             }
             catch (Exception e)
