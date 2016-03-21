@@ -1,6 +1,7 @@
 package com.mauriciotogneri.repose.kernel;
 
-import com.mauriciotogneri.repose.annotations.NotNull;
+import com.mauriciotogneri.repose.annotations.AllowEmpty;
+import com.mauriciotogneri.repose.annotations.Nullable;
 import com.mauriciotogneri.repose.annotations.Range;
 import com.mauriciotogneri.repose.exceptions.BadRequestException;
 import com.mauriciotogneri.repose.exceptions.MethodNotAllowedException;
@@ -117,18 +118,18 @@ public final class Request
 
     private void validateParameter(Field field, Object value) throws BadRequestException
     {
-        NotNull notNull = field.getAnnotation(NotNull.class);
+        Nullable nullable = field.getAnnotation(Nullable.class);
 
-        if (notNull != null)
+        if ((nullable == null) && (value == null))
         {
-            if (value == null)
-            {
-                throw new BadRequestException("Missing parameter '" + field.getName() + "'");
-            }
-            else if (notNull.value() && (value instanceof String) && (value.toString().isEmpty()))
-            {
-                throw new BadRequestException("Empty parameter '" + field.getName() + "'");
-            }
+            throw new BadRequestException("Missing parameter '" + field.getName() + "'");
+        }
+
+        AllowEmpty allowEmpty = field.getAnnotation(AllowEmpty.class);
+
+        if ((allowEmpty == null) && (value instanceof String) && (value.toString().isEmpty()))
+        {
+            throw new BadRequestException("Empty parameter '" + field.getName() + "'");
         }
 
         if (value != null)
