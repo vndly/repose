@@ -1,9 +1,9 @@
 package com.mauriciotogneri.repose.helpers;
 
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 public final class ResourceHelper
 {
@@ -14,16 +14,10 @@ public final class ResourceHelper
     @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public static String read(String path) throws IOException
     {
-        System.out.println(1/0);
         ClassLoader classLoader = ResourceHelper.class.getClassLoader();
-        File file = new File(classLoader.getResource(path).getFile());
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
-        inputStream.read(data);
+        InputStream inputStream = classLoader.getResourceAsStream(path);
 
-        close(inputStream);
-
-        return new String(data, "UTF-8");
+        return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
     }
 
     public static boolean close(Closeable resource)
