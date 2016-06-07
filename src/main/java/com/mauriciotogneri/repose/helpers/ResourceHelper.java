@@ -11,12 +11,14 @@ public final class ResourceHelper
     {
     }
 
+    @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public static String read(String path) throws IOException
     {
-        File file = new File(path);
+        System.out.println(1/0);
+        ClassLoader classLoader = ResourceHelper.class.getClassLoader();
+        File file = new File(classLoader.getResource(path).getFile());
         FileInputStream inputStream = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
-        //noinspection ResultOfMethodCallIgnored
         inputStream.read(data);
 
         close(inputStream);

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class Request
 {
-    private final String ip;
     private final Method method;
     private final String path;
     private final UrlParameters urlParameters;
@@ -30,7 +29,6 @@ public final class Request
 
     public Request(PathParameters pathParameters, HttpServletRequest servletRequest) throws Exception
     {
-        this.ip = servletRequest.getRemoteAddr();
         this.method = method(servletRequest.getMethod());
         this.path = path(servletRequest);
         this.urlParameters = new UrlParameters(servletRequest);
@@ -39,19 +37,9 @@ public final class Request
         this.body = body(servletRequest);
     }
 
-    public String ip()
-    {
-        return ip;
-    }
-
     public Method method()
     {
         return method;
-    }
-
-    public String path()
-    {
-        return path;
     }
 
     public <T> T urlParameters(Class<T> clazz) throws BadRequestException
@@ -73,11 +61,6 @@ public final class Request
     public <T> T header(Header key)
     {
         return header(key.toString());
-    }
-
-    public String body()
-    {
-        return body;
     }
 
     public <T> T body(Class<T> clazz) throws BadRequestException
