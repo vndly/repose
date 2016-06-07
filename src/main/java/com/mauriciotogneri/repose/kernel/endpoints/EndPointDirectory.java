@@ -1,12 +1,10 @@
 package com.mauriciotogneri.repose.kernel.endpoints;
 
-import com.mauriciotogneri.repose.exceptions.NotFoundException;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-public final class EndPointDirectory implements Iterable<EndPoint>
+public final class EndPointDirectory
 {
     private final List<EndPoint> endPoints = new ArrayList<>();
 
@@ -18,27 +16,21 @@ public final class EndPointDirectory implements Iterable<EndPoint>
         }
         else
         {
-            System.err.println("End point with same path already exist: " + endPoint.getPath());
+            System.err.println("End point with same path already exist: " + endPoint.path());
             System.exit(0);
         }
     }
 
-    public EndPoint get(String path) throws NotFoundException
+    public Optional<EndPoint> get(String path)
     {
         for (EndPoint endPoint : endPoints)
         {
             if (endPoint.matches(path))
             {
-                return endPoint;
+                return Optional.of(endPoint);
             }
         }
 
-        throw NotFoundException.DEFAULT;
-    }
-
-    @Override
-    public Iterator<EndPoint> iterator()
-    {
-        return endPoints.iterator();
+        return Optional.empty();
     }
 }

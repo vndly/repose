@@ -36,12 +36,12 @@ public final class JsonHelper
     {
     }
 
-    public static <T> T getObject(String json, Class<T> clazz)
+    public static <T> T object(String json, Class<T> clazz)
     {
         return GSON.fromJson(json, clazz);
     }
 
-    public static String getJson(Object object)
+    public static String json(Object object)
     {
         return GSON.toJson(object);
     }
@@ -51,7 +51,7 @@ public final class JsonHelper
         @Override
         public JsonElement serialize(DateTime dateTime, Type type, JsonSerializationContext context)
         {
-            return new JsonPrimitive(DateHelper.getDate(dateTime));
+            return new JsonPrimitive(DateHelper.date(dateTime));
         }
 
         @Override
@@ -59,7 +59,7 @@ public final class JsonHelper
         {
             try
             {
-                return DateHelper.getDate(jsonElement.getAsString());
+                return DateHelper.date(jsonElement.getAsString());
             }
             catch (Exception e)
             {

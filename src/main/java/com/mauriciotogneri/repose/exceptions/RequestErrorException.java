@@ -15,13 +15,12 @@ public class RequestErrorException extends Exception
         this.message = message;
     }
 
-    public StatusCode getStatusCode()
+    public StatusCode statusCode()
     {
         return statusCode;
     }
 
-    @Override
-    public String getMessage()
+    public String message()
     {
         return message;
     }

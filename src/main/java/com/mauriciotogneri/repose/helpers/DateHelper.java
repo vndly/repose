@@ -12,12 +12,12 @@ public final class DateHelper
     {
     }
 
-    public static synchronized String getDate(DateTime dateTime)
+    public static synchronized String date(DateTime dateTime)
     {
         return defaultFormat.print(dateTime);
     }
 
-    public static synchronized DateTime getDate(String value)
+    public static synchronized DateTime date(String value)
     {
         return defaultFormat.parseDateTime(value);
     }

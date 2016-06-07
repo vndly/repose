@@ -12,13 +12,11 @@ import com.mauriciotogneri.repose.kernel.parameters.UrlParameters;
 import com.mauriciotogneri.repose.types.Header;
 import com.mauriciotogneri.repose.types.Method;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map.Entry;
+import java.util.Scanner;
+
+import javax.servlet.http.HttpServletRequest;
 
 public final class Request
 {
@@ -29,72 +27,69 @@ public final class Request
     private final PathParameters pathParameters;
     private final HeaderParameters headerParameters;
     private final String body;
-    private final RequestStructure requestStructure;
 
-    public Request(Socket socket) throws BadRequestException, MethodNotAllowedException
+    public Request(PathParameters pathParameters, HttpServletRequest servletRequest) throws Exception
     {
-        this.requestStructure = new RequestStructure(socket);
-
-        this.ip = socket.getInetAddress().getHostAddress();
-        this.method = getMethod(requestStructure.path);
-        this.path = getPath(requestStructure.path);
-        this.urlParameters = getUrlParameters(requestStructure.path);
-        this.pathParameters = new PathParameters();
-        this.headerParameters = getHeaderParameters(requestStructure.headers);
-        this.body = requestStructure.body;
+        this.ip = servletRequest.getRemoteAddr();
+        this.method = method(servletRequest.getMethod());
+        this.path = path(servletRequest);
+        this.urlParameters = new UrlParameters(servletRequest);
+        this.pathParameters = pathParameters;
+        this.headerParameters = new HeaderParameters(servletRequest);
+        this.body = body(servletRequest);
     }
 
-    public String getIp()
+    public String ip()
     {
         return ip;
     }
 
-    public Method getMethod()
+    public Method method()
     {
         return method;
     }
 
-    public String getPath()
+    public String path()
     {
         return path;
     }
 
-    public <T> T getUrlParameters(Class<T> clazz) throws BadRequestException
+    public <T> T urlParameters(Class<T> clazz) throws BadRequestException
     {
-        return getObjectFromJson(clazz, urlParameters.getJson(), "Invalid url parameters");
+        return objectFromJson(clazz, urlParameters.json(), "Invalid url parameters");
     }
 
-    public <T> T getPathParameters(Class<T> clazz) throws BadRequestException
+    public <T> T pathParameters(Class<T> clazz) throws BadRequestException
     {
-        return getObjectFromJson(clazz, pathParameters.getJson(), "Invalid path parameters");
+        return objectFromJson(clazz, pathParameters.json(), "Invalid path parameters");
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getHeader(String key)
+    public <T> T header(String key)
     {
         return (T) headerParameters.get(key);
     }
 
-    public <T> T getHeader(Header key)
+    public <T> T header(Header key)
     {
-        return getHeader(key.toString());
+        return header(key.toString());
     }
 
-    public String getBody()
+    public String body()
     {
         return body;
     }
 
-    public <T> T getBody(Class<T> clazz) throws BadRequestException
+    public <T> T body(Class<T> clazz) throws BadRequestException
     {
-        return getObjectFromJson(clazz, body, "Invalid body");
+        return objectFromJson(clazz, body, "Invalid body");
     }
 
-    private <T> T getObjectFromJson(Class<T> clazz, String json, String message) throws BadRequestException
+    private <T> T objectFromJson(Class<T> clazz, String json, String message) throws BadRequestException
     {
         try
         {
-            T object = JsonHelper.getObject(json, clazz);
+            T object = JsonHelper.object(json, clazz);
             Field[] fields = clazz.getFields();
 
             for (Field field : fields)
@@ -151,18 +146,26 @@ public final class Request
         }
     }
 
-    public void loadPathParameters(Path path) throws BadRequestException
+    private String path(HttpServletRequest request)
     {
-        pathParameters.putAll(path.getPathParameters(this.path));
+        String requestURL = request.getRequestURI();
+        String queryString = request.getQueryString();
+
+        if (queryString == null)
+        {
+            return requestURL;
+        }
+        else
+        {
+            return String.format("%s?%s", requestURL, queryString);
+        }
     }
 
-    private Method getMethod(String input) throws MethodNotAllowedException
+    private Method method(String input) throws MethodNotAllowedException
     {
-        String methodValue = input.split(" ")[0].trim();
-
         try
         {
-            return Enum.valueOf(Method.class, methodValue);
+            return Enum.valueOf(Method.class, input);
         }
         catch (Exception e)
         {
@@ -170,151 +173,30 @@ public final class Request
         }
     }
 
-    private String[] getPathRequest(String input) throws BadRequestException
+    private String body(HttpServletRequest request) throws Exception
     {
-        try
-        {
-            return input.split(" ")[1].trim().split("\\?");
-        }
-        catch (Exception e)
-        {
-            throw new BadRequestException("Invalid path: " + input);
-        }
-    }
+        Scanner scanner = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A");
 
-    private String getPath(String input) throws BadRequestException
-    {
-        try
-        {
-            String[] pathRequest = getPathRequest(input);
-
-            return pathRequest[0].trim();
-        }
-        catch (Exception e)
-        {
-            throw new BadRequestException("Invalid path: " + input);
-        }
-    }
-
-    private UrlParameters getUrlParameters(String input) throws BadRequestException
-    {
-        try
-        {
-            UrlParameters urlParameters = new UrlParameters();
-            String[] pathRequest = getPathRequest(input);
-
-            if (pathRequest.length > 1)
-            {
-                String params = pathRequest[1].trim();
-                String[] parts = params.split("&");
-
-                for (String part : parts)
-                {
-                    String[] parameter = part.split("=");
-
-                    if (parameter.length > 1)
-                    {
-                        urlParameters.put(parameter[0], parameter[1]);
-                    }
-                }
-            }
-
-            return urlParameters;
-        }
-        catch (Exception e)
-        {
-            throw new BadRequestException("Invalid url parameters: " + input);
-        }
-    }
-
-    private HeaderParameters getHeaderParameters(List<String> headers)
-    {
-        HeaderParameters headerParameters = new HeaderParameters();
-
-        for (String header : headers)
-        {
-            String[] parts = header.split(":");
-            headerParameters.put(parts[0].trim(), parts[1].trim());
-        }
-
-        return headerParameters;
+        return scanner.hasNext() ? scanner.next() : "";
     }
 
     @Override
     public String toString()
     {
-        return requestStructure.toString();
-    }
+        StringBuilder builder = new StringBuilder();
 
-    private static class RequestStructure
-    {
-        public String path = "";
-        public final List<String> headers = new ArrayList<>();
-        public String body = "";
+        builder.append(String.format("%s\n", path));
 
-        private RequestStructure(Socket socket) throws BadRequestException
+        for (Entry<String, Object> header : headerParameters.entrySet())
         {
-            try
-            {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                boolean pathProcessed = false;
-                int contentLength = 0;
-                String line;
-
-                while (((line = reader.readLine()) != null) && (line.length() > 0))
-                {
-                    if (!pathProcessed)
-                    {
-                        path = URLDecoder.decode(line, "UTF-8");
-                        pathProcessed = true;
-                    }
-                    else
-                    {
-                        headers.add(line);
-
-                        if (line.startsWith(Header.CONTENT_LENGTH.toString()))
-                        {
-                            contentLength = Integer.parseInt(line.substring(16));
-                        }
-                    }
-                }
-
-                if (contentLength > 0)
-                {
-                    char[] buffer = new char[contentLength];
-                    int read = reader.read(buffer, 0, contentLength);
-
-                    if (read > 0)
-                    {
-                        body = new String(buffer);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                throw new BadRequestException("Invalid request", e);
-            }
+            builder.append(String.format("%s: %s\n", header.getKey(), header.getValue()));
         }
 
-        @Override
-        public String toString()
+        if (!body.isEmpty())
         {
-            StringBuilder builder = new StringBuilder();
-
-            builder.append(path).append("\n");
-
-            for (String header : headers)
-            {
-                builder.append(header).append("\n");
-            }
-
-            if (!body.isEmpty())
-            {
-                builder.append("\n").append(body);
-            }
-
-            return builder.toString();
+            builder.append("\n").append(body);
         }
+
+        return builder.toString();
     }
 }

@@ -6,10 +6,12 @@ import com.mauriciotogneri.repose.types.Header;
 import com.mauriciotogneri.repose.types.MimeType;
 import com.mauriciotogneri.repose.types.StatusCode;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 public final class Response
 {
@@ -79,17 +81,39 @@ public final class Response
         return builder.build();
     }
 
+    public void fillServletResponse(HttpServletResponse servletResponse)
+    {
+        servletResponse.setStatus(statusCode.code);
+
+        for (Entry<Header, Object> entry : headers.entrySet())
+        {
+            servletResponse.setHeader(entry.getKey().toString(), entry.getValue().toString());
+        }
+
+        if (!StringHelper.isEmpty(content))
+        {
+            try
+            {
+                PrintWriter writer = servletResponse.getWriter();
+                writer.write(String.format("%s\n", content));
+                writer.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("HTTP/1.1 ").append(statusCode.code).append(" ").append(statusCode.value).append("\r\n");
+        builder.append(String.format("HTTP/1.1 %d %s\r\n", statusCode.code, statusCode.value));
 
-        Set<Entry<Header, Object>> entries = headers.entrySet();
-
-        for (Entry<Header, Object> entry : entries)
+        for (Entry<Header, Object> entry : headers.entrySet())
         {
-            builder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+            builder.append(String.format("%s: %s\r\n", entry.getKey(), entry.getValue()));
         }
 
         builder.append("\r\n");
@@ -125,7 +149,7 @@ public final class Response
 
         public void setJsonContent(Object json)
         {
-            setContent(JsonHelper.getJson(json));
+            setContent(JsonHelper.json(json));
         }
 
         public void addHeader(Header key, Object value)

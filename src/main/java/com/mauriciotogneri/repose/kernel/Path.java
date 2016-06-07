@@ -41,7 +41,7 @@ public final class Path
         this.regexp = builder.toString();
     }
 
-    public PathParameters getPathParameters(String path) throws BadRequestException
+    public PathParameters pathParameters(String path) throws BadRequestException
     {
         try
         {

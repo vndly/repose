@@ -23,7 +23,7 @@ public class EndPoint
         this.path = new Path(path.value());
     }
 
-    public Path getPath()
+    public Path path()
     {
         return path;
     }
@@ -33,11 +33,11 @@ public class EndPoint
         return this.path.matches(path);
     }
 
-    public Response getResponse(Request request) throws Exception
+    public Response response(Request request) throws Exception
     {
         try
         {
-            Method method = request.getMethod();
+            Method method = request.method();
 
             switch (method)
             {
@@ -127,7 +127,7 @@ public class EndPoint
 
     protected void assertHeader(Request request, Header key, String value, Exception exception) throws Exception
     {
-        String header = request.getHeader(key);
+        String header = request.header(key);
 
         if ((header != null) && (!header.contains(value)))
         {

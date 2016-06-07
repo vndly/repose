@@ -3,11 +3,10 @@ package com.mauriciotogneri.repose.kernel.parameters;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class MapParameters extends HashMap<String, Object>
 {
-    public String getJson()
+    public String json()
     {
         JsonObject jsonObject = new JsonObject();
 
