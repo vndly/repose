@@ -136,11 +136,11 @@ public final class Request
 
         if (queryString == null)
         {
-            return requestURL;
+            return String.format("%s %s %s", request.getMethod(), requestURL, request.getProtocol());
         }
         else
         {
-            return String.format("%s?%s", requestURL, queryString);
+            return String.format("%s %s?%s, %s", request.getMethod(), requestURL, queryString, request.getProtocol());
         }
     }
 

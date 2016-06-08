@@ -41,6 +41,7 @@ public class Dispatcher extends AbstractHandler
                     Response endPointResponse = handle(endPoint.get(), target, request);
                     fillResponse(endPointResponse, response, startTime);
                     handled = true;
+                    break;
                 }
             }
 
