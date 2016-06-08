@@ -16,7 +16,7 @@ public final class EndPointDirectory
         }
         else
         {
-            System.err.println("End point with same path already exist: " + endPoint.path());
+            System.err.println(String.format("End point with same path already exist: %s", endPoint.path()));
             System.exit(0);
         }
     }

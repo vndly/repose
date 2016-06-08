@@ -100,14 +100,14 @@ public final class Request
 
         if ((nullable == null) && (value == null))
         {
-            throw new BadRequestException("Missing parameter '" + field.getName() + "'");
+            throw new BadRequestException(String.format("Missing parameter '%s'", field.getName()));
         }
 
         AllowEmpty allowEmpty = field.getAnnotation(AllowEmpty.class);
 
         if ((allowEmpty == null) && (value instanceof String) && (value.toString().isEmpty()))
         {
-            throw new BadRequestException("Empty parameter '" + field.getName() + "'");
+            throw new BadRequestException(String.format("Empty parameter '%s'", field.getName()));
         }
 
         if (value != null)
@@ -122,7 +122,7 @@ public final class Request
 
                     if ((intValue < range.min()) || (intValue > range.max()))
                     {
-                        throw new BadRequestException("Parameter '" + field.getName() + "' with value " + intValue + " out of range [" + range.min() + ", " + range.max() + "]");
+                        throw new BadRequestException(String.format("Parameter '%s' with value '%s' out of range [%s, %s]", field.getName(), intValue, range.min(), range.max()));
                     }
                 }
             }

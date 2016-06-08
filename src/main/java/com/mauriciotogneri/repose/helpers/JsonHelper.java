@@ -63,7 +63,7 @@ public final class JsonHelper
             }
             catch (Exception e)
             {
-                throw new RuntimeException("Error parsing date: " + jsonElement.getAsString());
+                throw new RuntimeException(String.format("Error parsing date: %s", jsonElement.getAsString()));
             }
         }
     }
@@ -136,7 +136,7 @@ public final class JsonHelper
 
             if (result == null)
             {
-                throw new RuntimeException("Invalid enum value: " + value + " for type: " + classOfT.getName());
+                throw new RuntimeException(String.format("Invalid enum value '%s' for type '%s'", value, classOfT.getName()));
             }
 
             return result;

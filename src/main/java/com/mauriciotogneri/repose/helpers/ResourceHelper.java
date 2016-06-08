@@ -20,6 +20,11 @@ public final class ResourceHelper
         return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
     }
 
+    public static String read(String pattern, Object... parameters) throws IOException
+    {
+        return read(String.format(pattern, parameters));
+    }
+
     public static boolean close(Closeable resource)
     {
         boolean result = false;

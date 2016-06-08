@@ -122,7 +122,7 @@ public class EndPoint
 
     protected void assertContentType(Request request, MimeType mimeType) throws Exception
     {
-        assertHeader(request, Header.CONTENT_TYPE, mimeType.toString(), new NonAcceptableException("Resource representation is only available with these Content-Types: " + mimeType.toString()));
+        assertHeader(request, Header.CONTENT_TYPE, mimeType.toString(), new NonAcceptableException(String.format("Resource representation is only available with these Content-Types: %s", mimeType.toString())));
     }
 
     protected void assertHeader(Request request, Header key, String value, Exception exception) throws Exception

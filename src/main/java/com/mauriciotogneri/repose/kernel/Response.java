@@ -137,7 +137,7 @@ public final class Response
             this.statusCode = statusCode;
             this.headers = new HashMap<>();
 
-            addHeader(Header.CONTENT_TYPE, mimeType + "; charset=utf-8");
+            addHeader(Header.CONTENT_TYPE, String.format("%s; charset=utf-8", mimeType));
         }
 
         public void setContent(String content)

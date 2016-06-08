@@ -26,8 +26,12 @@ public class Dispatcher extends AbstractHandler
     @Override
     public void handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response)
     {
+        long startTime = System.nanoTime();
+
         try
         {
+            boolean handled = false;
+
             for (Service service : services)
             {
                 Optional<EndPoint> endPoint = service.endPoint(target);
@@ -35,32 +39,36 @@ public class Dispatcher extends AbstractHandler
                 if (endPoint.isPresent())
                 {
                     Response endPointResponse = handle(endPoint.get(), target, request);
-                    endPointResponse.fillServletResponse(response);
-                    break;
+                    fillResponse(endPointResponse, response, startTime);
+                    handled = true;
                 }
             }
 
-            throw NotFoundException.DEFAULT;
+            if (!handled)
+            {
+                throw NotFoundException.DEFAULT;
+            }
         }
         catch (Exception e)
         {
-            repose.onException(e).fillServletResponse(response);
+            Response exceptionResponse = repose.onException(e);
+            fillResponse(exceptionResponse, response, startTime);
         }
     }
 
     private Response handle(EndPoint endPoint, String target, HttpServletRequest servletRequest) throws Exception
     {
-        long startTime = System.nanoTime();
-
         Request request = new Request(endPoint.path().pathParameters(target), servletRequest);
 
         repose.onRequest(request);
 
-        Response response = endPoint.response(request);
+        return endPoint.response(request);
+    }
 
+    private void fillResponse(Response response, HttpServletResponse servletResponse, long startTime)
+    {
         repose.onResponse(response, requestTime(startTime));
-
-        return response;
+        response.fillServletResponse(servletResponse);
     }
 
     private int requestTime(long startTime)
