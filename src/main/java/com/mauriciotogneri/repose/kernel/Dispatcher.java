@@ -30,8 +30,6 @@ public class Dispatcher extends AbstractHandler
 
         try
         {
-            boolean handled = false;
-
             for (Service service : services)
             {
                 Optional<EndPoint> endPoint = service.endPoint(target);
@@ -40,15 +38,12 @@ public class Dispatcher extends AbstractHandler
                 {
                     Response endPointResponse = handle(endPoint.get(), target, request);
                     fillResponse(endPointResponse, response, startTime);
-                    handled = true;
-                    break;
+                    baseRequest.setHandled(true);
+                    return;
                 }
             }
 
-            if (!handled)
-            {
-                throw NotFoundException.DEFAULT;
-            }
+            throw NotFoundException.DEFAULT;
         }
         catch (Exception e)
         {

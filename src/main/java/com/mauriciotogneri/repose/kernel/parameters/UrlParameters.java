@@ -13,7 +13,7 @@ public final class UrlParameters extends MapParameters
 
             if (value.length > 0)
             {
-                put(name, value);
+                put(name, value[0]);
             }
         }
     }
