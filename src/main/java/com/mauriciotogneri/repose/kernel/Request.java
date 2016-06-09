@@ -1,8 +1,5 @@
 package com.mauriciotogneri.repose.kernel;
 
-import com.mauriciotogneri.repose.annotations.AllowEmpty;
-import com.mauriciotogneri.repose.annotations.Nullable;
-import com.mauriciotogneri.repose.annotations.Range;
 import com.mauriciotogneri.repose.exceptions.BadRequestException;
 import com.mauriciotogneri.repose.exceptions.MethodNotAllowedException;
 import com.mauriciotogneri.repose.helpers.JsonHelper;
@@ -14,6 +11,7 @@ import com.mauriciotogneri.repose.types.Method;
 
 import java.lang.reflect.Field;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -96,36 +94,9 @@ public final class Request
 
     private void validateParameter(Field field, Object value) throws BadRequestException
     {
-        Nullable nullable = field.getAnnotation(Nullable.class);
-
-        if ((nullable == null) && (value == null))
+        if ((!field.getType().equals(Optional.class)) && (value == null))
         {
             throw new BadRequestException(String.format("Missing parameter '%s'", field.getName()));
-        }
-
-        AllowEmpty allowEmpty = field.getAnnotation(AllowEmpty.class);
-
-        if ((allowEmpty == null) && (value instanceof String) && (value.toString().isEmpty()))
-        {
-            throw new BadRequestException(String.format("Empty parameter '%s'", field.getName()));
-        }
-
-        if (value != null)
-        {
-            Range range = field.getAnnotation(Range.class);
-
-            if (range != null)
-            {
-                if (value instanceof Integer)
-                {
-                    Integer intValue = (Integer) value;
-
-                    if ((intValue < range.min()) || (intValue > range.max()))
-                    {
-                        throw new BadRequestException(String.format("Parameter '%s' with value '%s' out of range [%s, %s]", field.getName(), intValue, range.min(), range.max()));
-                    }
-                }
-            }
         }
     }
 

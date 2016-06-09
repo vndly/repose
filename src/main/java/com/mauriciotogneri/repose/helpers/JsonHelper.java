@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -20,17 +21,20 @@ import com.google.gson.stream.JsonWriter;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class JsonHelper
 {
-    private static final Gson GSON = new GsonBuilder().//
-            setPrettyPrinting().//
-            registerTypeAdapter(DateTime.class, new DateTimeTypeAdapter()).//
-            registerTypeAdapterFactory(new EnumAdapterFactory()). //
-            create();
+    private static final Gson GSON = new GsonBuilder() //
+            .setPrettyPrinting() //
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeAdapter()) //
+            .registerTypeAdapter(Optional.class, new OptionalTypeAdapter()) //
+            .registerTypeAdapterFactory(new EnumAdapterFactory()) //
+            .create();
 
     private JsonHelper()
     {
@@ -55,7 +59,7 @@ public final class JsonHelper
         }
 
         @Override
-        public DateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException
+        public DateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException
         {
             try
             {
@@ -68,11 +72,42 @@ public final class JsonHelper
         }
     }
 
+    private static class OptionalTypeAdapter implements JsonSerializer<Optional>, JsonDeserializer<Optional>
+    {
+        @Override
+        public JsonElement serialize(Optional optional, Type type, JsonSerializationContext context)
+        {
+            if (optional.isPresent())
+            {
+                return context.serialize(optional.get());
+            }
+            else
+            {
+                return JsonNull.INSTANCE;
+            }
+        }
+
+        @Override
+        public Optional deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException
+        {
+            try
+            {
+                ParameterizedType t = (ParameterizedType) type;
+
+                return Optional.of(context.deserialize(jsonElement, t.getActualTypeArguments()[0]));
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(String.format("Error parsing optional: %s", jsonElement.getAsString()));
+            }
+        }
+    }
+
     private static class EnumAdapterFactory implements TypeAdapterFactory
     {
         @Override
         @SuppressWarnings("unchecked")
-        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken)
+        public <T> com.google.gson.TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken)
         {
             Class<? super T> rawType = typeToken.getRawType();
 
