@@ -14,6 +14,11 @@ public final class RandomHelper
         return (new Random().nextInt(outOf) < valid);
     }
 
+    public static boolean chance(int outOf)
+    {
+        return (new Random().nextInt(outOf) == 0);
+    }
+
     public static int get(int min, int max)
     {
         return new Random().nextInt((max - min) + 1) + min;
@@ -37,5 +42,10 @@ public final class RandomHelper
     public static int sign()
     {
         return (new Random().nextBoolean() ? 1 : -1);
+    }
+
+    public static boolean nextBoolean()
+    {
+        return new Random().nextBoolean();
     }
 }

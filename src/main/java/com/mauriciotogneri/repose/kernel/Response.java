@@ -74,11 +74,37 @@ public final class Response
         return builder.build();
     }
 
+    public static Response binary(String content, MimeType mimeType)
+    {
+        Builder builder = new Builder(StatusCode.OK, mimeType);
+        builder.setContent(content);
+
+        return builder.build();
+    }
+
     public static Response empty(StatusCode statusCode)
     {
         Builder builder = new Builder(statusCode, MimeType.PLAIN);
 
         return builder.build();
+    }
+
+    public boolean isBinary()
+    {
+        for (Entry<Header, Object> entry : headers.entrySet())
+        {
+            if (entry.getKey() == Header.CONTENT_TYPE)
+            {
+                String value = entry.getValue().toString();
+
+                if (value.startsWith(MimeType.JPG.toString()) || value.startsWith(MimeType.PNG.toString()) || value.startsWith(MimeType.PDF.toString()))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public void fillServletResponse(HttpServletResponse servletResponse)
