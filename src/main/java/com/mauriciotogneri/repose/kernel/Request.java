@@ -40,16 +40,6 @@ public final class Request
         return method;
     }
 
-    public <T> T urlParameters(Class<T> clazz) throws BadRequestException
-    {
-        return objectFromJson(clazz, urlParameters.json(), "Invalid url parameters");
-    }
-
-    public <T> T pathParameters(Class<T> clazz) throws BadRequestException
-    {
-        return objectFromJson(clazz, pathParameters.json(), "Invalid path parameters");
-    }
-
     @SuppressWarnings("unchecked")
     public <T> T header(String key)
     {
@@ -59,6 +49,16 @@ public final class Request
     public <T> T header(Header key)
     {
         return header(key.toString());
+    }
+
+    public <T> T url(Class<T> clazz) throws BadRequestException
+    {
+        return objectFromJson(clazz, urlParameters.json(), "Invalid url parameters");
+    }
+
+    public <T> T path(Class<T> clazz) throws BadRequestException
+    {
+        return objectFromJson(clazz, pathParameters.json(), "Invalid path parameters");
     }
 
     public <T> T body(Class<T> clazz) throws BadRequestException
