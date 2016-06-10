@@ -14,8 +14,7 @@ public final class ResourceHelper
     @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public static String read(String path) throws IOException
     {
-        ClassLoader classLoader = ResourceHelper.class.getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(path);
+        InputStream inputStream = inputStream(path);
 
         return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
     }
@@ -23,6 +22,13 @@ public final class ResourceHelper
     public static String read(String pattern, Object... parameters) throws IOException
     {
         return read(String.format(pattern, parameters));
+    }
+
+    public static InputStream inputStream(String path)
+    {
+        ClassLoader classLoader = ResourceHelper.class.getClassLoader();
+
+        return classLoader.getResourceAsStream(path);
     }
 
     public static boolean close(Closeable resource)

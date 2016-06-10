@@ -59,6 +59,13 @@ public final class JsonHelper
         return parser.parse(json(object)).getAsJsonObject();
     }
 
+    public static JsonObject parseJson(String json)
+    {
+        JsonParser parser = new JsonParser();
+
+        return parser.parse(json).getAsJsonObject();
+    }
+
     private static class DateTimeTypeAdapter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime>
     {
         @Override
