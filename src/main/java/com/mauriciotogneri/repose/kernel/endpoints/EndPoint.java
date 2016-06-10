@@ -7,7 +7,7 @@ import com.mauriciotogneri.repose.exceptions.NonAcceptableException;
 import com.mauriciotogneri.repose.kernel.Path;
 import com.mauriciotogneri.repose.kernel.Request;
 import com.mauriciotogneri.repose.kernel.Response;
-import com.mauriciotogneri.repose.types.Header;
+import com.mauriciotogneri.repose.types.HeaderType;
 import com.mauriciotogneri.repose.types.Method;
 import com.mauriciotogneri.repose.types.MimeType;
 import com.mauriciotogneri.repose.types.StatusCode;
@@ -122,10 +122,10 @@ public class EndPoint
 
     protected void assertContentType(Request request, MimeType mimeType) throws Exception
     {
-        assertHeader(request, Header.CONTENT_TYPE, mimeType.toString(), new NonAcceptableException(String.format("Resource representation is only available with these Content-Types: %s", mimeType.toString())));
+        assertHeader(request, HeaderType.CONTENT_TYPE, mimeType.toString(), new NonAcceptableException(String.format("Resource representation is only available with these Content-Types: %s", mimeType.toString())));
     }
 
-    protected void assertHeader(Request request, Header key, String value, Exception exception) throws Exception
+    protected void assertHeader(Request request, HeaderType key, String value, Exception exception) throws Exception
     {
         String header = request.header(key);
 

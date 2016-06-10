@@ -32,6 +32,23 @@ public final class ListHelper
         return result;
     }
 
+    public static <T> String join(List<T> list)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        for (T element : list)
+        {
+            if (builder.length() != 0)
+            {
+                builder.append(", ");
+            }
+
+            builder.append(element.toString());
+        }
+
+        return builder.toString();
+    }
+
     public interface Factory<T>
     {
         T create(String input);

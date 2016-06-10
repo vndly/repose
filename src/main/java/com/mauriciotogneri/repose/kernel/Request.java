@@ -6,7 +6,7 @@ import com.mauriciotogneri.repose.helpers.JsonHelper;
 import com.mauriciotogneri.repose.kernel.parameters.HeaderParameters;
 import com.mauriciotogneri.repose.kernel.parameters.PathParameters;
 import com.mauriciotogneri.repose.kernel.parameters.UrlParameters;
-import com.mauriciotogneri.repose.types.Header;
+import com.mauriciotogneri.repose.types.HeaderType;
 import com.mauriciotogneri.repose.types.Method;
 
 import java.lang.reflect.Field;
@@ -51,7 +51,7 @@ public final class Request
         return (T) headerParameters.get(key);
     }
 
-    public <T> T header(Header key)
+    public <T> T header(HeaderType key)
     {
         return header(key.toString());
     }

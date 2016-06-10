@@ -1,6 +1,6 @@
 package com.mauriciotogneri.repose.types;
 
-public enum Header
+public enum HeaderType
 {
     // request
     ACCEPT("Accept"), //
@@ -11,6 +11,7 @@ public enum Header
 
     // response
     SET_COOKIE("Set-Cookie"), //
+    LINK("Link"), //
 
     // both
     CONTENT_LENGTH("Content-Length"), //
@@ -18,7 +19,7 @@ public enum Header
 
     private final String value;
 
-    Header(String value)
+    HeaderType(String value)
     {
         this.value = value;
     }
