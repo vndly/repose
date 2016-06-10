@@ -10,11 +10,14 @@ import com.mauriciotogneri.repose.types.Header;
 import com.mauriciotogneri.repose.types.Method;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 public final class Request
 {
@@ -23,6 +26,7 @@ public final class Request
     private final UrlParameters urlParameters;
     private final PathParameters pathParameters;
     private final HeaderParameters headerParameters;
+    private final Collection<Part> parts;
     private final String body;
 
     public Request(PathParameters pathParameters, HttpServletRequest servletRequest) throws Exception
@@ -32,6 +36,7 @@ public final class Request
         this.urlParameters = new UrlParameters(servletRequest);
         this.pathParameters = pathParameters;
         this.headerParameters = new HeaderParameters(servletRequest);
+        this.parts = parts(servletRequest);
         this.body = body(servletRequest);
     }
 
@@ -64,6 +69,11 @@ public final class Request
     public <T> T body(Class<T> clazz) throws BadRequestException
     {
         return objectFromJson(clazz, body, "Invalid body");
+    }
+
+    public Collection<Part> parts()
+    {
+        return parts;
     }
 
     private <T> T objectFromJson(Class<T> clazz, String json, String message) throws BadRequestException
@@ -112,6 +122,18 @@ public final class Request
         else
         {
             return String.format("%s %s?%s, %s", request.getMethod(), requestURL, queryString, request.getProtocol());
+        }
+    }
+
+    private Collection<Part> parts(HttpServletRequest request)
+    {
+        try
+        {
+            return request.getParts();
+        }
+        catch (Exception e)
+        {
+            return new ArrayList<>();
         }
     }
 
