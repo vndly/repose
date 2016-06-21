@@ -6,7 +6,7 @@ public final class EnumHelper
     {
     }
 
-    public static <T> T random(Class<T> clazz)
+    public static <T extends Enum> T random(Class<T> clazz)
     {
         T[] values = clazz.getEnumConstants();
 

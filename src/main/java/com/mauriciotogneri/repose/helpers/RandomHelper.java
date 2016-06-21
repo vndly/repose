@@ -31,12 +31,22 @@ public final class RandomHelper
 
     public static double nextDouble()
     {
-        return new Random().nextDouble();
+        return NumberHelper.round(new Random().nextDouble(), 2);
+    }
+
+    public static double nextSignedDouble()
+    {
+        return NumberHelper.round(nextDouble() * sign(), 2);
     }
 
     public static double nextDouble(double max)
     {
-        return new Random().nextDouble() * max;
+        return NumberHelper.round(new Random().nextDouble() * max, 2);
+    }
+
+    public static double nextSignedDouble(double max)
+    {
+        return NumberHelper.round(nextDouble(max) * sign(), 2);
     }
 
     public static int sign()

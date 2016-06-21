@@ -31,11 +31,11 @@ import java.util.Optional;
 
 public final class JsonHelper
 {
-    private static final Gson GSON = new GsonBuilder() //
-            .setPrettyPrinting() //
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeAdapter()) //
-            .registerTypeAdapter(Optional.class, new OptionalTypeAdapter()) //
-            .registerTypeAdapterFactory(new EnumAdapterFactory()) //
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeAdapter())
+            .registerTypeAdapter(Optional.class, new OptionalTypeAdapter())
+            .registerTypeAdapterFactory(new EnumAdapterFactory())
             .create();
 
     private JsonHelper()

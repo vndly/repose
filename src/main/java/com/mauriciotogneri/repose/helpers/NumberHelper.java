@@ -9,6 +9,21 @@ public final class NumberHelper
     {
     }
 
+    public static int randomInt(int places)
+    {
+        return RandomHelper.nextInt(places);
+    }
+
+    public static double randomAsDecimal(int places)
+    {
+        return round(RandomHelper.nextDouble() * Math.pow(10, places), 2);
+    }
+
+    public static double randomPercentage()
+    {
+        return round(RandomHelper.nextDouble() * RandomHelper.sign(), 2);
+    }
+
     public static double round(double value, int places)
     {
         BigDecimal bigDecimal = new BigDecimal(value);

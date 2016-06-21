@@ -1,6 +1,7 @@
 package com.mauriciotogneri.repose.helpers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,17 @@ public final class ListHelper
     public static <T> T random(List<T> list)
     {
         return list.get(RandomHelper.nextInt(list.size()));
+    }
+
+    public static List<String> split(String list)
+    {
+        List<String> result = new ArrayList<>();
+
+        String[] parts = list.split(",");
+
+        Collections.addAll(result, parts);
+
+        return result;
     }
 
     public static <T> List<T> split(Optional<String> list, Factory<T> factory)
@@ -40,7 +52,7 @@ public final class ListHelper
         {
             if (builder.length() != 0)
             {
-                builder.append(", ");
+                builder.append(",");
             }
 
             builder.append(element.toString());
