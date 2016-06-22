@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +31,9 @@ public class Dispatcher extends AbstractHandler
 
         try
         {
+            MultipartConfigElement multipartConfigElement = new MultipartConfigElement("/tmp");
+            request.setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
+
             for (Service service : services)
             {
                 Optional<EndPoint> endPoint = service.endPoint(target);
